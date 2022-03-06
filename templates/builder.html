@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/static/js/jquery.click-hold.js"></script>
+    <script src="/static/js/button.js" charset="utf-8"></script>
+    <title></title>
+  </head>
+  <body>
+    <div class="entry-content clearfix" style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top: 10px">
+      <canvas></canvas>
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top: 10px">
+      <div>
+        <button onclick="addButton(-2)">Watch</button>
+        <button onclick="addButton(-1)">Remove</button><br>
+      </div>
+      <div>
+        <button onclick="addButton(0)">Door</button>
+        <button onclick="addButton(1)">Lever up</button>
+        <button onclick="addButton(2)">Lever down</button><br>
+      </div>
+      <button onclick="saveData()">Save</button>
+      <div id="spX">x:</div><br>
+      <div id="spY">y:</div><br>
+      <div id="spO">offset:</div>
+      <div class="file-manager" style="display:flex; flex-wrap: wrap; flex-direction:row; align-items:center; justify-content:center; margin-top: 10px">
+        {% for id, file in files %}
+        <button onclick="openImg('id{{ id }}', '/static/image/{{ file }}')">id{{ id }}<br><img src="/static/image/{{ file }}" alt="" height=100px></button>
+        {% endfor %}
+    </div>
+  </div>
+
+  </body>
+</html>
+<script src="/static/js/builder.js" charset="utf-8"></script>
