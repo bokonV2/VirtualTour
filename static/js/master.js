@@ -9,7 +9,9 @@ var pic = new Image();
 var load = true, door = true, offset = 0;
 var height, width, id;
 let data;
-let div = document.createElement('div');
+
+
+let div = document.createElement('div'); //div с элементами управления сдвига и кнопкой "домой"
 div.innerHTML = '<div style="margin-top:5px;">\
   <button id="butL" style="background: transparent;border: 0;"><img src="/static/image/btn/left.png" alt="" width=80px></button>\
   <button onclick="init(data)" style="background: transparent;border: 0;"><img src="/static/image/btn/home.png" alt="" width=80px></button>\
@@ -17,7 +19,8 @@ div.innerHTML = '<div style="margin-top:5px;">\
 </div>'
 $('.entry-content').append(div);
 
-if(navigator.userAgent.match(/Android|iPhone/i)){
+
+if(navigator.userAgent.match(/Android|iPhone/i)){ // Настройка для мобильных устройств
   if(window.matchMedia("(orientation: portrait)").matches) {
     alert("Расположите устройсво горизонтально");
   };
@@ -27,13 +30,13 @@ if(navigator.userAgent.match(/Android|iPhone/i)){
   $('#butR').clickAndHold({
     timeout: 5,
     onHold: function (e, n) {
-      move(1);
+      move(10);
     }
   });
   $('#butL').clickAndHold({
     timeout: 5,
     onHold: function (e, n) {
-      move(-1);
+      move(-10);
     }
   });
 };
@@ -50,6 +53,14 @@ function paintImage(r) {
 };
 
 function drawObjects(objects, offset, x, y, rtn) {
+  function paintCtx(r){
+    ctx.beginPath();
+    ctx.moveTo(r.cords.x - offset, r.cords.y);
+    ctx.lineTo(r.cords.x - offset, r.cords.y + 50);
+    ctx.lineTo(r.cords.x + 50 - offset, r.cords.y + 50);
+    ctx.lineTo(r.cords.x + 50 - offset, r.cords.y);
+    ctx.closePath();
+  }
   for(var r of objects) {
     switch (r.type) {
       case 0:
@@ -70,12 +81,7 @@ function drawObjects(objects, offset, x, y, rtn) {
         if (x == 0) {
           paintImage(r);
         };
-        ctx.beginPath();
-        ctx.moveTo(r.cords.x - offset, r.cords.y);
-        ctx.lineTo(r.cords.x - offset, r.cords.y + 50);
-        ctx.lineTo(r.cords.x + 50 - offset, r.cords.y + 50);
-        ctx.lineTo(r.cords.x + 50 - offset, r.cords.y);
-        ctx.closePath();
+        paintCtx(r);
         if (ctx.isPointInPath(x, y)) {
           ctx.strokeStyle = "yellow";
           ctx.stroke();
@@ -87,12 +93,7 @@ function drawObjects(objects, offset, x, y, rtn) {
         if (x == 0) {
           paintImage(r);
         }
-        ctx.beginPath();
-        ctx.moveTo(r.cords.x - offset, r.cords.y);
-        ctx.lineTo(r.cords.x - offset, r.cords.y + 50);
-        ctx.lineTo(r.cords.x + 50 - offset, r.cords.y + 50);
-        ctx.lineTo(r.cords.x + 50 - offset, r.cords.y);
-        ctx.closePath();
+        paintCtx(r);
         if (ctx.isPointInPath(x, y)) {
           ctx.strokeStyle = "yellow";
           ctx.stroke();
@@ -114,10 +115,11 @@ function init(datas) {
 function move(side) {
   ctx.lineWidth = 2;
   offset = offset + side;
-  if (offset > width - canvasWidth){offset = width - canvasWidth};
+  if (offset > width - width/(height/canvasHeight)){offset = width - width/(height/canvasHeight)};
   if (offset < 0){offset = 0};
   if (door) {
-    ctx.drawImage(pic, offset, 0, canvasWidth, height, 0, 0, canvasWidth, canvasHeight);
+    // ctx.drawImage(pic, offset, 0, canvasWidth, height, 0, 0, canvasWidth, canvasHeight);
+    ctx.drawImage(pic, offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
     drawObjects(data[id].buttons, offset, 0, 0);
   };
 };
@@ -125,13 +127,14 @@ function move(side) {
 canvas.onmousemove = function(e) {
   ctx.lineWidth = 1;
   var rect = this.getBoundingClientRect();
-  var x = e.clientX - rect.left;
+  var x = e.client - rect.left;
   var y = e.clientY - rect.top;
   if (door){drawObjects(data[id].buttons, offset, x, y)};
 };
 
 canvas.onmousedown = function (e) {
   var rect = this.getBoundingClientRect();
+
   var x = e.clientX - rect.left;
   var y = e.clientY - rect.top;
   var draw = drawObjects(data[id].buttons, offset, x, y);
@@ -149,7 +152,11 @@ pic.onload = function () {
   width = pic.width;
   height = pic.height;
   offset = (width - canvasWidth)/2;
-  ctx.drawImage(pic, offset, 0, canvasWidth, height, 0, 0, canvasWidth, canvasHeight);
+  // offset = 0;
+  console.log(offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
+  console.log(width - width/(height/canvasHeight));
+  // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
+  ctx.drawImage(pic, offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
   drawObjects(data[id].buttons, offset, 0, 0);
 };
 

@@ -1,19 +1,27 @@
 var canvas = document.querySelector("canvas");
-canvas.width  = 800;
-canvas.height = 600;
+var canvasWidth = 800, canvasHeight = 600;
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
+
 var spX = $('#spX');
 var spY = $('#spY');
 var spO = $('#spO');
+
 var ctx = canvas.getContext("2d");
 var pic = new Image();
-var offset = 0;
-var i = 0;
-let data;
+
+var load = true, door = true, offset = 0;
 var cords = {};
-var width;
-var height;
-var id;
 var mode = 0;
+var i = 0;
+
+var height;
+var width;
+var reWidth;
+let data;
+var id;
+
+var temp = 10;
 
 let div = document.createElement('div');
 div.innerHTML = '<div style="margin-top:5px;">\
@@ -28,13 +36,13 @@ $(document).ready(function () {
   $('#butR').clickAndHold({
     timeout: 5,
     onHold: function (e, n) {
-      move(1);
+      move(10);
     }
   });
   $('#butL').clickAndHold({
     timeout: 5,
     onHold: function (e, n) {
-      move(-1);
+      move(-10);
     }
   });
 });
@@ -54,14 +62,15 @@ function paintImage(r) {
 
 function drawObjects(objects, offset, x, y, rtn) {
   var r, i = 0;
+  console.log(offset, offset/(width/canvasWidth), width/(height/canvasHeight), width/(height/canvasHeight)+offset)
   for(r of objects) {
     switch (r.type) {
       case 0:
         ctx.beginPath();
-        ctx.moveTo(r.cords.tr[0] - offset, r.cords.tr[1]);
-        ctx.lineTo(r.cords.br[0] - offset, r.cords.br[1]);
-        ctx.lineTo(r.cords.bl[0] - offset, r.cords.bl[1]);
-        ctx.lineTo(r.cords.tl[0] - offset, r.cords.tl[1]);
+        ctx.moveTo(r.cords.tr[0] - (offset/(width/canvasWidth) + offset)/2, r.cords.tr[1]);
+        ctx.lineTo(r.cords.br[0] - (offset/(width/canvasWidth) + offset)/2, r.cords.br[1]);
+        ctx.lineTo(r.cords.bl[0] - (offset/(width/canvasWidth) + offset)/2, r.cords.bl[1]);
+        ctx.lineTo(r.cords.tl[0] - (offset/(width/canvasWidth) + offset)/2, r.cords.tl[1]);
         ctx.closePath();
         if (ctx.isPointInPath(x, y)) {
           ctx.strokeStyle = "yellow";
@@ -122,13 +131,14 @@ function init(datas) {
 
 function move(side) {
   offset = offset + side;
-  if (offset > width - 800){
-    offset = width - 800;
+  if (offset > (width - width/(height/canvasHeight))){
+    offset = (width - width/(height/canvasHeight));
   }
   if (offset < 0){
     offset = 0;
   }
-  ctx.drawImage(pic, offset, 0, 800, height, 0, 0, 800, 600);
+  ctx.drawImage(pic, offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
+  // ctx.drawImage(pic, offset, 0, 800, height, 0, 0, 800, 600);
   drawObjects(data[id].buttons, offset, 0, 0);
 };
 
@@ -175,9 +185,13 @@ canvas.onmousemove = function(e) {
 
 canvas.onmousedown = function (e) {
   var rect = this.getBoundingClientRect();
+  console.log(rect.left)
+  console.log(rect)
+  console.log(e)
   var x = e.clientX - rect.left;
   var y = e.clientY - rect.top;
   var ccr = {};
+  console.log(x,y);
   switch (mode) {
     case -2:
       var draw = drawObjects(data[id].buttons, offset, x, y);
@@ -188,30 +202,27 @@ canvas.onmousedown = function (e) {
       };
       break;
     case -1:
+
       var draw = drawObjects(data[id].buttons, offset, x, y);
+
       console.log(data[id].buttons);
       data[id].buttons.splice([draw[2]], 1);
       console.log(data[id].buttons);
-      drawObjects(data[id].buttons, offset, 0, 0);
-      drawObjects(data[id].buttons, offset, 0, 0);
-      drawObjects(data[id].buttons, offset, 0, 0);
-      drawObjects(data[id].buttons, offset, 0, 0);
-      drawObjects(data[id].buttons, offset, 0, 0);
       drawObjects(data[id].buttons, offset, 0, 0);
       break;
     case 0:
       switch (i) {
         case 0:
-          cords["tl"] = [x + offset, y];
+          cords["tl"] = [x + (offset/(width/canvasWidth) + offset)/2, y];
           break;
         case 1:
-          cords["bl"] = [x + offset, y];
+          cords["bl"] = [x + (offset/(width/canvasWidth) + offset)/2, y];
           break;
         case 2:
-          cords["br"] = [x + offset, y];
+          cords["br"] = [x + (offset/(width/canvasWidth) + offset)/2, y];
           break;
         case 3:
-          cords["tr"] = [x + offset, y];
+          cords["tr"] = [x + (offset/(width/canvasWidth) + offset)/2, y];
           i = -1;
           ccr["type"] = 0;
           ccr["idTo"] = "id"+prompt("idTo");
@@ -242,10 +253,15 @@ canvas.onmousedown = function (e) {
 };
 
 pic.onload = function () {
+  // load = true; door = true;
+  ctx.lineWidth = 2;
   width = pic.width;
   height = pic.height;
-  offset = (width - 800)/2;
-  ctx.drawImage(pic, offset, 0, 800, height, 0, 0, 800, 600);
+  reWidth = width/(height/canvasHeight);
+  offset = (width - width/(height/canvasHeight))/2;
+  console.log(offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
+  console.log(width - width/(height/canvasHeight));
+  ctx.drawImage(pic, offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
   drawObjects(data[id].buttons, offset, 0, 0);
 };
 
