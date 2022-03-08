@@ -6,10 +6,14 @@ canvas.height = canvasHeight;
 var ctx = canvas.getContext("2d");
 var pic = new Image();
 
+var spX = $('#spX');
+var spY = $('#spY');
+var spO = $('#spO');
+
 var load = true, door = true, offset = 0;
 var height, width, id;
 let data;
-
+var reWidth, reCWidth, reOffset;
 
 let div = document.createElement('div'); //div с элементами управления сдвига и кнопкой "домой"
 div.innerHTML = '<div style="margin-top:5px;">\
@@ -47,41 +51,41 @@ function paintImage(r) {
   if (r.type == 1){pic.src = up} else {pic.src = down};
   if (load) {pic.onload = function() {
       load = false;
-      ctx.drawImage(pic, r.cords.x - offset + 2, r.cords.y, 46, 50);
+      ctx.drawImage(pic, r.cords.x - reOffset + 2, r.cords.y, 46, 50);
     };
-  } else {ctx.drawImage(pic, r.cords.x - offset + 2, r.cords.y, 46, 50)};
+  } else {ctx.drawImage(pic, r.cords.x - reOffset + 2, r.cords.y, 46, 50)};
 };
 
 function drawObjects(objects, offset, x, y, rtn) {
-  function paintCtx(r){
-    ctx.beginPath();
-    ctx.moveTo(r.cords.x - offset, r.cords.y);
-    ctx.lineTo(r.cords.x - offset, r.cords.y + 50);
-    ctx.lineTo(r.cords.x + 50 - offset, r.cords.y + 50);
-    ctx.lineTo(r.cords.x + 50 - offset, r.cords.y);
-    ctx.closePath();
-  }
+  reOffset = (offset/(reCWidth/canvasWidth));
   for(var r of objects) {
     switch (r.type) {
       case 0:
         ctx.beginPath();
-        ctx.moveTo(r.cords.tr[0] - offset, r.cords.tr[1]);
-        ctx.lineTo(r.cords.br[0] - offset, r.cords.br[1]);
-        ctx.lineTo(r.cords.bl[0] - offset, r.cords.bl[1]);
-        ctx.lineTo(r.cords.tl[0] - offset, r.cords.tl[1]);
+        ctx.moveTo(r.cords.tr[0] - reOffset, r.cords.tr[1]);
+        ctx.lineTo(r.cords.br[0] - reOffset, r.cords.br[1]);
+        ctx.lineTo(r.cords.bl[0] - reOffset, r.cords.bl[1]);
+        ctx.lineTo(r.cords.tl[0] - reOffset, r.cords.tl[1]);
         ctx.closePath();
         if (ctx.isPointInPath(x, y)) {
           ctx.strokeStyle = "yellow";
           ctx.stroke();
           return [true, r];
-        } else {ctx.strokeStyle = "white"};
+        } else {
+          ctx.strokeStyle = "white";
+        }
         ctx.stroke();
         break;
       case 1:
         if (x == 0) {
           paintImage(r);
         };
-        paintCtx(r);
+        ctx.beginPath();
+        ctx.moveTo(r.cords.x - reOffset, r.cords.y);
+        ctx.lineTo(r.cords.x - reOffset, r.cords.y + 50);
+        ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y + 50);
+        ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y);
+        ctx.closePath();
         if (ctx.isPointInPath(x, y)) {
           ctx.strokeStyle = "yellow";
           ctx.stroke();
@@ -93,7 +97,12 @@ function drawObjects(objects, offset, x, y, rtn) {
         if (x == 0) {
           paintImage(r);
         }
-        paintCtx(r);
+        ctx.beginPath();
+        ctx.moveTo(r.cords.x - reOffset, r.cords.y);
+        ctx.lineTo(r.cords.x - reOffset, r.cords.y + 50);
+        ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y + 50);
+        ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y);
+        ctx.closePath();
         if (ctx.isPointInPath(x, y)) {
           ctx.strokeStyle = "yellow";
           ctx.stroke();
@@ -115,26 +124,33 @@ function init(datas) {
 function move(side) {
   ctx.lineWidth = 2;
   offset = offset + side;
-  if (offset > width - width/(height/canvasHeight)){offset = width - width/(height/canvasHeight)};
-  if (offset < 0){offset = 0};
+  if (offset > width-reCWidth){
+    offset = width-reCWidth;
+  }
+  if (offset < 0) {
+      offset = 0;
+  }
   if (door) {
-    // ctx.drawImage(pic, offset, 0, canvasWidth, height, 0, 0, canvasWidth, canvasHeight);
-    ctx.drawImage(pic, offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
+    ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
     drawObjects(data[id].buttons, offset, 0, 0);
   };
 };
 
 canvas.onmousemove = function(e) {
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 2;
   var rect = this.getBoundingClientRect();
-  var x = e.client - rect.left;
+  var x = e.clientX - rect.left;
   var y = e.clientY - rect.top;
-  if (door){drawObjects(data[id].buttons, offset, x, y)};
+  spX.html("x: " + x);
+  spY.html("y: " + y);
+  spO.html("offset: " + offset);
+  if (door) {
+    drawObjects(data[id].buttons, offset, x, y);
+  }
 };
 
 canvas.onmousedown = function (e) {
   var rect = this.getBoundingClientRect();
-
   var x = e.clientX - rect.left;
   var y = e.clientY - rect.top;
   var draw = drawObjects(data[id].buttons, offset, x, y);
@@ -151,12 +167,10 @@ pic.onload = function () {
   ctx.lineWidth = 2;
   width = pic.width;
   height = pic.height;
-  offset = (width - canvasWidth)/2;
-  // offset = 0;
-  console.log(offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
-  console.log(width - width/(height/canvasHeight));
-  // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight)
-  ctx.drawImage(pic, offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
+  reWidth = Math.round(width/(height/canvasHeight));
+  reCWidth = Math.round(canvasWidth/(canvasHeight/height));
+  offset =  Math.round(width/2 - reCWidth/2);
+  ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
   drawObjects(data[id].buttons, offset, 0, 0);
 };
 

@@ -18,6 +18,8 @@ var i = 0;
 var height;
 var width;
 var reWidth;
+var reCWidth;
+var reOffset;
 let data;
 var id;
 
@@ -55,27 +57,27 @@ function paintImage(r) {
     pic.src = down;
   }
   pic.onload = function() {
-    ctx.drawImage(pic, r.cords.x - offset + 2, r.cords.y, 46, 50);  // Рисуем изображение от точки с координатами 0, 0
+    ctx.drawImage(pic, r.cords.x - reOffset + 2, r.cords.y, 46, 50);  // Рисуем изображение от точки с координатами 0, 0
   };
 };
 
 
 function drawObjects(objects, offset, x, y, rtn) {
-  var r, i = 0;
-  console.log(offset, offset/(width/canvasWidth), width/(height/canvasHeight), width/(height/canvasHeight)+offset)
-  for(r of objects) {
+  var index = 0;
+  reOffset = (offset/(reCWidth/canvasWidth));
+  for(var r of objects) {
     switch (r.type) {
       case 0:
         ctx.beginPath();
-        ctx.moveTo(r.cords.tr[0] - (offset/(width/canvasWidth) + offset)/2, r.cords.tr[1]);
-        ctx.lineTo(r.cords.br[0] - (offset/(width/canvasWidth) + offset)/2, r.cords.br[1]);
-        ctx.lineTo(r.cords.bl[0] - (offset/(width/canvasWidth) + offset)/2, r.cords.bl[1]);
-        ctx.lineTo(r.cords.tl[0] - (offset/(width/canvasWidth) + offset)/2, r.cords.tl[1]);
+        ctx.moveTo(r.cords.tr[0] - reOffset, r.cords.tr[1]);
+        ctx.lineTo(r.cords.br[0] - reOffset, r.cords.br[1]);
+        ctx.lineTo(r.cords.bl[0] - reOffset, r.cords.bl[1]);
+        ctx.lineTo(r.cords.tl[0] - reOffset, r.cords.tl[1]);
         ctx.closePath();
         if (ctx.isPointInPath(x, y)) {
           ctx.strokeStyle = "yellow";
           ctx.stroke();
-          return [true, r, i];
+          return [true, r, index];
         } else {
           ctx.strokeStyle = "white";
         }
@@ -84,15 +86,15 @@ function drawObjects(objects, offset, x, y, rtn) {
         case 1:
           paintImage(r);
           ctx.beginPath();
-          ctx.moveTo(r.cords.x - offset, r.cords.y);
-          ctx.lineTo(r.cords.x - offset, r.cords.y + 50);
-          ctx.lineTo(r.cords.x + 50 - offset, r.cords.y + 50);
-          ctx.lineTo(r.cords.x + 50 - offset, r.cords.y);
+          ctx.moveTo(r.cords.x - reOffset, r.cords.y);
+          ctx.lineTo(r.cords.x - reOffset, r.cords.y + 50);
+          ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y + 50);
+          ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y);
           ctx.closePath();
           if (ctx.isPointInPath(x, y)) {
             ctx.strokeStyle = "yellow";
             ctx.stroke();
-            return [true, r, i];
+            return [true, r, index];
           } else {
             ctx.strokeStyle = "white";
           }
@@ -101,22 +103,22 @@ function drawObjects(objects, offset, x, y, rtn) {
         case 2:
           paintImage(r);
           ctx.beginPath();
-          ctx.moveTo(r.cords.x - offset, r.cords.y);
-          ctx.lineTo(r.cords.x - offset, r.cords.y + 50);
-          ctx.lineTo(r.cords.x + 50 - offset, r.cords.y + 50);
-          ctx.lineTo(r.cords.x + 50 - offset, r.cords.y);
+          ctx.moveTo(r.cords.x - reOffset, r.cords.y);
+          ctx.lineTo(r.cords.x - reOffset, r.cords.y + 50);
+          ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y + 50);
+          ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y);
           ctx.closePath();
           if (ctx.isPointInPath(x, y)) {
             ctx.strokeStyle = "yellow";
             ctx.stroke();
-            return [true, r, i];
+            return [true, r, index];
           } else {
             ctx.strokeStyle = "white";
           }
           ctx.stroke();
           break;
     }
-    i = i + 1;
+    index = index + 1;
 
   };
 };
@@ -131,14 +133,16 @@ function init(datas) {
 
 function move(side) {
   offset = offset + side;
-  if (offset > (width - width/(height/canvasHeight))){
-    offset = (width - width/(height/canvasHeight));
+
+  if (offset > width-reCWidth) {
+    offset = width-reCWidth;
   }
-  if (offset < 0){
+
+  if (offset < 0) {
     offset = 0;
   }
-  ctx.drawImage(pic, offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
-  // ctx.drawImage(pic, offset, 0, 800, height, 0, 0, 800, 600);
+
+  ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
   drawObjects(data[id].buttons, offset, 0, 0);
 };
 
@@ -185,13 +189,9 @@ canvas.onmousemove = function(e) {
 
 canvas.onmousedown = function (e) {
   var rect = this.getBoundingClientRect();
-  console.log(rect.left)
-  console.log(rect)
-  console.log(e)
   var x = e.clientX - rect.left;
   var y = e.clientY - rect.top;
   var ccr = {};
-  console.log(x,y);
   switch (mode) {
     case -2:
       var draw = drawObjects(data[id].buttons, offset, x, y);
@@ -202,27 +202,28 @@ canvas.onmousedown = function (e) {
       };
       break;
     case -1:
-
       var draw = drawObjects(data[id].buttons, offset, x, y);
-
-      console.log(data[id].buttons);
-      data[id].buttons.splice([draw[2]], 1);
-      console.log(data[id].buttons);
+      // console.log(data[id].buttons);
+      // console.log(draw[2]);
+      data[id].buttons.splice(draw[2], 1);
+      // console.log(data[id].buttons);
+      ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
       drawObjects(data[id].buttons, offset, 0, 0);
       break;
     case 0:
+      console.log(i)
       switch (i) {
         case 0:
-          cords["tl"] = [x + (offset/(width/canvasWidth) + offset)/2, y];
+          cords["tl"] = [x + reOffset, y];
           break;
         case 1:
-          cords["bl"] = [x + (offset/(width/canvasWidth) + offset)/2, y];
+          cords["bl"] = [x + reOffset, y];
           break;
         case 2:
-          cords["br"] = [x + (offset/(width/canvasWidth) + offset)/2, y];
+          cords["br"] = [x + reOffset, y];
           break;
         case 3:
-          cords["tr"] = [x + (offset/(width/canvasWidth) + offset)/2, y];
+          cords["tr"] = [x + reOffset, y];
           i = -1;
           ccr["type"] = 0;
           ccr["idTo"] = "id"+prompt("idTo");
@@ -237,14 +238,14 @@ canvas.onmousedown = function (e) {
     case 1:
       ccr["type"] = 1;
       ccr["idTo"] = "id"+prompt("idTo");
-      ccr["cords"] = {x:x + offset, y:y};
+      ccr["cords"] = {x:x + reOffset, y:y};
       data[id]["buttons"].push(ccr);
       drawObjects(data[id].buttons, offset, x, y);
       break;
     case 2:
       ccr["type"] = 2;
       ccr["idTo"] = "id"+prompt("idTo");
-      ccr["cords"] = {x:x + offset, y:y};
+      ccr["cords"] = {x:x + reOffset, y:y};
       data[id]["buttons"].push(ccr);
       drawObjects(data[id].buttons, offset, x, y);
       break;
@@ -253,15 +254,13 @@ canvas.onmousedown = function (e) {
 };
 
 pic.onload = function () {
-  // load = true; door = true;
   ctx.lineWidth = 2;
   width = pic.width;
   height = pic.height;
-  reWidth = width/(height/canvasHeight);
-  offset = (width - width/(height/canvasHeight))/2;
-  console.log(offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
-  console.log(width - width/(height/canvasHeight));
-  ctx.drawImage(pic, offset, 0, width, height, 0, 0, width/(height/canvasHeight), canvasHeight);
+  reWidth = Math.round(width/(height/canvasHeight));
+  reCWidth = Math.round(canvasWidth/(canvasHeight/height));
+  offset =  Math.round(width/2 - reCWidth/2);
+  ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
   drawObjects(data[id].buttons, offset, 0, 0);
 };
 
