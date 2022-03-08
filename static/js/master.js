@@ -12,12 +12,14 @@ var spO = $('#spO');
 
 var load = true, door = true, offset = 0;
 var height, width, id;
+const oldId = new Array();
 let data;
 var reWidth, reCWidth, reOffset;
 
 let div = document.createElement('div'); //div с элементами управления сдвига и кнопкой "домой"
 div.innerHTML = '<div style="margin-top:5px;">\
   <button id="butL" style="background: transparent;border: 0;"><img src="/static/image/btn/left.png" alt="" width=80px></button>\
+  <button onclick="back()" style="background: transparent;border: 0;"><img src="/static/image/btn/return.png" alt="" width=80px></button>\
   <button onclick="init(data)" style="background: transparent;border: 0;"><img src="/static/image/btn/home.png" alt="" width=80px></button>\
   <button id="butR" style="background: transparent;border: 0;"><img src="/static/image/btn/right.png" alt="" width=80px></button>\
 </div>'
@@ -121,6 +123,16 @@ function init(datas) {
   pic.src = data[id].img;
 };
 
+function back() {
+  door = false;
+  id = oldId[oldId.length-1];
+  pic.src = data[oldId[oldId.length-1]].img;
+  offset = data[oldId[oldId.length-1]].offset;
+  if (oldId.length > 1){
+    oldId.splice(oldId.length-1, 1);
+  }
+};
+
 function move(side) {
   ctx.lineWidth = 2;
   offset = offset + side;
@@ -137,7 +149,7 @@ function move(side) {
 };
 
 canvas.onmousemove = function(e) {
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 1;
   var rect = this.getBoundingClientRect();
   var x = e.clientX - rect.left;
   var y = e.clientY - rect.top;
@@ -156,6 +168,7 @@ canvas.onmousedown = function (e) {
   var draw = drawObjects(data[id].buttons, offset, x, y);
   if (draw[0]){
     door = false;
+    oldId.push(id);
     id = draw[1].idTo;
     pic.src = data[draw[1].idTo].img;
     offset = data[draw[1].idTo].offset;

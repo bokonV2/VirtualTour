@@ -19,8 +19,18 @@ def builder():
         print(type(data))
         with open('static/json/data.json', 'w', encoding='utf-8') as f:
             json.dump(data, f)
+
+
     files = os.listdir("./static/image")
-    return render_template('builder.html', files=enumerate(files))
+    print(files)
+
+    path =".\static\image"
+    filelist = []
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if(file.endswith(".jpg")):
+                filelist.append((os.path.join(root,file)).replace(".\static\image\\", "").replace("\\", "/"))
+    return render_template('builder.html', files=enumerate(filelist))
 
 @app.route('/test')
 def test():
