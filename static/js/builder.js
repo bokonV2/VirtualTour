@@ -51,10 +51,19 @@ $(document).ready(function () {
 
 function paintImage(r) {
   var pic = new Image();
-  if (r.type == 1){
-    pic.src = up;
-  }else{
-    pic.src = down;
+  switch (r.type) {
+    case 1:
+      pic.src = up;
+      break;
+    case 2:
+      pic.src = down;
+      break;
+    case 3:
+      pic.src = enterB;
+      break;
+    case 4:
+      pic.src = loopB;
+      break;
   }
   pic.onload = function() {
     ctx.drawImage(pic, r.cords.x - reOffset + 2, r.cords.y, 46, 50);  // Рисуем изображение от точки с координатами 0, 0
@@ -63,6 +72,14 @@ function paintImage(r) {
 
 
 function drawObjects(objects, offset, x, y, rtn) {
+  function ctxDraw(r) {
+    ctx.beginPath();
+    ctx.moveTo(r.cords.x - reOffset, r.cords.y);
+    ctx.lineTo(r.cords.x - reOffset, r.cords.y + 50);
+    ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y + 50);
+    ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y);
+    ctx.closePath();
+  }
   var index = 0;
   reOffset = (offset/(reCWidth/canvasWidth));
   for(var r of objects) {
@@ -85,12 +102,7 @@ function drawObjects(objects, offset, x, y, rtn) {
         break;
         case 1:
           paintImage(r);
-          ctx.beginPath();
-          ctx.moveTo(r.cords.x - reOffset, r.cords.y);
-          ctx.lineTo(r.cords.x - reOffset, r.cords.y + 50);
-          ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y + 50);
-          ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y);
-          ctx.closePath();
+          ctxDraw(r);
           if (ctx.isPointInPath(x, y)) {
             ctx.strokeStyle = "yellow";
             ctx.stroke();
@@ -101,13 +113,10 @@ function drawObjects(objects, offset, x, y, rtn) {
           ctx.stroke();
           break;
         case 2:
-          paintImage(r);
-          ctx.beginPath();
-          ctx.moveTo(r.cords.x - reOffset, r.cords.y);
-          ctx.lineTo(r.cords.x - reOffset, r.cords.y + 50);
-          ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y + 50);
-          ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y);
-          ctx.closePath();
+          // if (x == 0) {
+            paintImage(r);
+          // }
+          ctxDraw(r)
           if (ctx.isPointInPath(x, y)) {
             ctx.strokeStyle = "yellow";
             ctx.stroke();
@@ -115,6 +124,30 @@ function drawObjects(objects, offset, x, y, rtn) {
           } else {
             ctx.strokeStyle = "white";
           }
+          ctx.stroke();
+          break;
+        case 3:
+          // if (x == 0) {
+            paintImage(r);
+          // }
+          ctxDraw(r)
+          if (ctx.isPointInPath(x, y)) {
+            ctx.strokeStyle = "yellow";
+            ctx.stroke();
+            return [true, r];
+          } else {ctx.strokeStyle = "white"}
+          ctx.stroke();
+          break;
+        case 4:
+          // if (x == 0) {
+            paintImage(r);
+          // }
+          ctxDraw(r)
+          if (ctx.isPointInPath(x, y)) {
+            ctx.strokeStyle = "yellow";
+            ctx.stroke();
+            return [true, r];
+          } else {ctx.strokeStyle = "white"}
           ctx.stroke();
           break;
     }
@@ -244,6 +277,20 @@ canvas.onmousedown = function (e) {
       break;
     case 2:
       ccr["type"] = 2;
+      ccr["idTo"] = "id"+prompt("idTo");
+      ccr["cords"] = {x:x + reOffset, y:y};
+      data[id]["buttons"].push(ccr);
+      drawObjects(data[id].buttons, offset, x, y);
+      break;
+    case 3:
+      ccr["type"] = 3;
+      ccr["idTo"] = "id"+prompt("idTo");
+      ccr["cords"] = {x:x + reOffset, y:y};
+      data[id]["buttons"].push(ccr);
+      drawObjects(data[id].buttons, offset, x, y);
+      break;
+    case 4:
+      ccr["type"] = 4;
       ccr["idTo"] = "id"+prompt("idTo");
       ccr["cords"] = {x:x + reOffset, y:y};
       data[id]["buttons"].push(ccr);

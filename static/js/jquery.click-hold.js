@@ -51,7 +51,31 @@
             clearInterval(self.interval);
             self.options.timeout = self.initialTimeout;
             self.indicator = 0;
+        }).mouseleave(function (e) {
+            // Restore state
+            self.mouseStillDown = false;
+            self.options.onRelease.call(this, e);
+            clearInterval(self.interval);
+            self.options.timeout = self.initialTimeout;
+            self.indicator = 0;
+          });
+
+        this.$element.bind("touchstart", function (e) {
+            // Cache state and call onHold
+            self.mouseStillDown = true;
+            self.element = this;
+            self.event = e;
+            self.initialTimeout = self.options.timeout;
+            self.callAndCheck();
         });
+        this.$element.bind("touchend", function (e) {
+            // Restore state
+            self.mouseStillDown = false;
+            self.options.onRelease.call(this, e);
+            clearInterval(self.interval);
+            self.options.timeout = self.initialTimeout;
+            self.indicator = 0;
+        })
     };
 
     /**
