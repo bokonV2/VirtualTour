@@ -1,7 +1,7 @@
 # VirtualTour
 ### _HTML widget for interactive viewing of photos_
 
-[![N|Solid](https://img.shields.io/badge/POWERED_BY-<IdiocyPatience>-green?style=for-the-badge)](https://nodesource.com/products/nsolid)
+[![N|Solid](https://img.shields.io/badge/POWERED_BY-<IdiocyPatience>-green?style=for-the-badge)](https://play.google.com/store/apps/developer?id=IdiocyPatience)
 
 [![Build Status](https://img.shields.io/badge/Status-build-orange)](https://github.com/bokonV2/VirtualTour/issues)
 
