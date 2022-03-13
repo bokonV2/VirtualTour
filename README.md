@@ -39,10 +39,10 @@ and create a [static] folder on your server
 - bokon2014@yandex.by
 
 ## License
-By using this project you agree to the [GPL] license
+By using this project you agree to the [GNU] license
     
 [static]: <https://github.com/bokonV2/VirtualTour/tree/main/static>
-[GPL]: <https://github.com/bokonV2/VirtualTour/blob/main/LICENSE>
+[GNU]: <https://github.com/bokonV2/VirtualTour/blob/main/LICENSE>
 [Telegram]: <https://t.me/AyToshi>
 [jQuery]: <http://jquery.com>
 [jqueryClickAndHold]: <https://github.com/phuong/jqueryClickAndHold>
