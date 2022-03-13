@@ -1,3 +1,15 @@
+/*
+ * VirtualTour
+ * https://github.com/bokonV2/VirtualTour
+ *
+ * Developed by Bohan Zahar
+ * https://t.me/AyToshi
+ *
+ * Licensed under the GNU General Public License v3.0:
+ * https://github.com/bokonV2/VirtualTour/blob/main/LICENSE
+ */
+
+
 var canvasWidth = Number($("canvas").data("cwidth"));
 var canvasHeight = Number($("canvas").data("cheight"));
 var path = $("canvas").data("path")
@@ -15,6 +27,7 @@ const oldId = new Array();
 let data;
 var id;
 
+let label = document.createElement('div');
 let div = document.createElement('div');
 div.innerHTML = '<div style="margin-top:5px;">\
   <img id="butL" style="background: transparent;border: 0;" draggable="false" src="/static/image/btn/left.png" oncontextmenu="return false;" alt="left" width=80px>\
@@ -22,6 +35,9 @@ div.innerHTML = '<div style="margin-top:5px;">\
   <button onclick="init(data)" style="background: transparent;border: 0;"><img src="/static/image/btn/home.png" oncontextmenu="return false;" alt="" width=80px></button>\
   <img id="butR" style="background: transparent;border: 0;" draggable="false" src="/static/image/btn/right.png" oncontextmenu="return false;" alt="right" width=80px>\
 </div>'
+label.innerHTML = "<label>Developed by Bohan Zahar&nbsp</label><a href='https://t.me/AyToshi'>Telegram&nbsp</a><a href='https://www.instagram.com/zakhar.bokhan/'>Instagram</a>"
+label.style = `display:flex; flex-direction:row; align-items:center; justify-content: flex-end; width:${canvasWidth}px;`;
+$('.entry-content').prepend(label);
 $('.entry-content').append(div);
 
 
@@ -117,6 +133,7 @@ function move(side) {
     drawObjects(data[id].buttons, offset, 0, 0);
   };
 };
+
 
 canvas.onmousemove = function(e) {
   ctx.lineWidth = 1;
