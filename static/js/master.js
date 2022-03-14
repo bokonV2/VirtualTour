@@ -104,7 +104,6 @@ function drawObjects(objects, offset, x, y, rtn) {
       return [true, r];
     } else {ctx.strokeStyle = "white"};
     ctx.stroke();
-    return [false, NaN]
   };
 };
 
@@ -173,4 +172,4 @@ pic.onload = function () {
 };
 
 
-$.getJSON(path + '/static/json/data.json', init);
+$.getJSON('/static/json/data.json', init);
