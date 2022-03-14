@@ -169,7 +169,7 @@ canvas.onmousedown = function (e) {
     door = false;
     oldId.push(id);
     id = draw[1].idTo;
-    pic.src = path + data[draw[1].idTo].img;
+    pic.src = data[draw[1].idTo].img;
     offset = data[draw[1].idTo].offset;
   };
 };
