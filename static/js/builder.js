@@ -1,5 +1,6 @@
 var canvas = document.querySelector("canvas");
-var canvasWidth = 800, canvasHeight = 600;
+var canvasWidth = Number($("canvas").data("cwidth"));
+var canvasHeight = Number($("canvas").data("cheight"));
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
@@ -14,6 +15,7 @@ var load = true, door = true, offset = 0;
 var cords = {};
 var mode = 0;
 var i = 0;
+var scale = canvasHeight/600;
 
 var height;
 var width;
@@ -23,14 +25,19 @@ var reOffset;
 let data;
 var id;
 
-var temp = 10;
 
+let label = document.createElement('div');
 let div = document.createElement('div');
-div.innerHTML = '<div style="margin-top:5px;">\
-  <button id="butL" style="background: transparent;border: 0;"><img src="/static/image/btn/left.png" alt="" width=80px></button>\
-  <button onclick="init(data)" style="background: transparent;border: 0;"><img src="/static/image/btn/home.png" alt="" width=80px></button>\
-  <button id="butR" style="background: transparent;border: 0;"><img src="/static/image/btn/right.png" alt="" width=80px></button>\
-</div>'
+div.innerHTML = `
+  <img id="butL" style="background: transparent;border: 0;" draggable="false" src="/static/image/btn/left.png" oncontextmenu="return false;" alt="left" width=80px>
+  <button onclick="back()" style="background: transparent;border: 0;"><img src="/static/image/btn/return.png" oncontextmenu="return false;" alt="" width=80px></button>
+  <button onclick="init(data)" style="background: transparent;border: 0;"><img src="/static/image/btn/home.png" oncontextmenu="return false;" alt="" width=80px></button>
+  <img id="butR" style="background: transparent;border: 0;" draggable="false" src="/static/image/btn/right.png" oncontextmenu="return false;" alt="right" width=80px>
+`;
+label.innerHTML = "<label>Developed by Bohan Zahar&nbsp</label><a href='https://t.me/AyToshi'>Telegram&nbsp</a><a href='https://www.instagram.com/zakhar.bokhan/'>Instagram</a>"
+label.style = `display:flex; flex-direction:row; align-items:center; justify-content: flex-end; width:${canvasWidth}px;`;
+div.style = "margin-top:5px;";
+$('.entry-content').prepend(label);
 $('.entry-content').append(div);
 
 
@@ -66,7 +73,7 @@ function paintImage(r) {
       break;
   }
   pic.onload = function() {
-    ctx.drawImage(pic, r.cords.x - reOffset + 2, r.cords.y, 46, 50);  // Рисуем изображение от точки с координатами 0, 0
+    ctx.drawImage(pic, r.cords.x * scale - reOffset + 2, r.cords.y * scale, 46, 50);
   };
 };
 
@@ -74,22 +81,23 @@ function paintImage(r) {
 function drawObjects(objects, offset, x, y, rtn) {
   function ctxDraw(r) {
     ctx.beginPath();
-    ctx.moveTo(r.cords.x - reOffset, r.cords.y);
-    ctx.lineTo(r.cords.x - reOffset, r.cords.y + 50);
-    ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y + 50);
-    ctx.lineTo(r.cords.x + 50 - reOffset, r.cords.y);
+    ctx.moveTo(r.cords.x * scale - reOffset, r.cords.y * scale);
+    ctx.lineTo(r.cords.x * scale - reOffset, r.cords.y * scale + 50);
+    ctx.lineTo(r.cords.x * scale + 50 - reOffset, r.cords.y * scale + 50);
+    ctx.lineTo(r.cords.x * scale + 50 - reOffset, r.cords.y * scale);
     ctx.closePath();
   }
   var index = 0;
   reOffset = (offset/(reCWidth/canvasWidth));
+
   for(var r of objects) {
     switch (r.type) {
       case 0:
         ctx.beginPath();
-        ctx.moveTo(r.cords.tr[0] - reOffset, r.cords.tr[1]);
-        ctx.lineTo(r.cords.br[0] - reOffset, r.cords.br[1]);
-        ctx.lineTo(r.cords.bl[0] - reOffset, r.cords.bl[1]);
-        ctx.lineTo(r.cords.tl[0] - reOffset, r.cords.tl[1]);
+        ctx.moveTo(r.cords.tr[0] * scale - reOffset, r.cords.tr[1] * scale);
+        ctx.lineTo(r.cords.br[0] * scale - reOffset, r.cords.br[1] * scale);
+        ctx.lineTo(r.cords.bl[0] * scale - reOffset, r.cords.bl[1] * scale);
+        ctx.lineTo(r.cords.tl[0] * scale - reOffset, r.cords.tl[1] * scale);
         ctx.closePath();
         if (ctx.isPointInPath(x, y)) {
           ctx.strokeStyle = "yellow";
@@ -177,6 +185,7 @@ function move(side) {
 
   ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
   drawObjects(data[id].buttons, offset, 0, 0);
+  spO.html("offset: " + offset + ";" + reOffset);
 };
 
 function openImg(ids, src) {
@@ -214,7 +223,7 @@ canvas.onmousemove = function(e) {
   var y = e.clientY - rect.top;
   spX.html("x: " + x);
   spY.html("y: " + y);
-  spO.html("offset: " + offset);
+  spO.html("offset: " + offset + ";" + reOffset);
   if (mode == -2) {
     drawObjects(data[id].buttons, offset, x, y);
   }
@@ -247,16 +256,16 @@ canvas.onmousedown = function (e) {
       console.log(i)
       switch (i) {
         case 0:
-          cords["tl"] = [x + reOffset, y];
+          cords["tl"] = [(x + reOffset) / scale, y / scale];
           break;
         case 1:
-          cords["bl"] = [x + reOffset, y];
+          cords["bl"] = [(x + reOffset) / scale, y / scale];
           break;
         case 2:
-          cords["br"] = [x + reOffset, y];
+          cords["br"] = [(x + reOffset) / scale, y / scale];
           break;
         case 3:
-          cords["tr"] = [x + reOffset, y];
+          cords["tr"] = [(x + reOffset) / scale, y / scale];
           i = -1;
           ccr["type"] = 0;
           ccr["idTo"] = "id"+prompt("idTo");
@@ -271,28 +280,28 @@ canvas.onmousedown = function (e) {
     case 1:
       ccr["type"] = 1;
       ccr["idTo"] = "id"+prompt("idTo");
-      ccr["cords"] = {x:x + reOffset, y:y};
+      ccr["cords"] = {x:x * scale + reOffset, y:y * scale};
       data[id]["buttons"].push(ccr);
       drawObjects(data[id].buttons, offset, x, y);
       break;
     case 2:
       ccr["type"] = 2;
       ccr["idTo"] = "id"+prompt("idTo");
-      ccr["cords"] = {x:x + reOffset, y:y};
+      ccr["cords"] = {x:x * scale + reOffset, y:y * scale};
       data[id]["buttons"].push(ccr);
       drawObjects(data[id].buttons, offset, x, y);
       break;
     case 3:
       ccr["type"] = 3;
       ccr["idTo"] = "id"+prompt("idTo");
-      ccr["cords"] = {x:x + reOffset, y:y};
+      ccr["cords"] = {x:x * scale + reOffset, y:y * scale};
       data[id]["buttons"].push(ccr);
       drawObjects(data[id].buttons, offset, x, y);
       break;
     case 4:
       ccr["type"] = 4;
       ccr["idTo"] = "id"+prompt("idTo");
-      ccr["cords"] = {x:x + reOffset, y:y};
+      ccr["cords"] = {x:x * scale + reOffset, y:y * scale};
       data[id]["buttons"].push(ccr);
       drawObjects(data[id].buttons, offset, x, y);
       break;
@@ -313,4 +322,3 @@ pic.onload = function () {
 
 
 $.getJSON('/static/json/data.json', init);
-// document.addEventListener("DOMContentLoaded", init, false);

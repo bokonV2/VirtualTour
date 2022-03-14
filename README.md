@@ -1,19 +1,19 @@
 # VirtualTour
 ### _HTML widget for interactive viewing of photos_
 
-[![N|Solid](https://img.shields.io/badge/POWERED_BY-<IdiocyPatience>-green?style=for-the-badge)](https://nodesource.com/products/nsolid)
+[![N|Solid](https://img.shields.io/badge/POWERED_BY-<IdiocyPatience>-green?style=for-the-badge)](https://play.google.com/store/apps/developer?id=IdiocyPatience)
 
 [![Build Status](https://img.shields.io/badge/Status-build-orange)](https://github.com/bokonV2/VirtualTour/issues)
 
 ## Features
 - [ ] Add a convenient constructor
-- [ ] Add a dynamic path to a static folder
 - [ ] Optimize the design solution for mobile devices
-- [ ] Fix the display when changing the canvas height
+- [x] Scale for mobile devices
+- [x] Fix the display when changing the canvas height
 
 ## Note
 - Unstable work on mobile devices
-- Display problems when changing the canvas height
+- The path selection for the static folder is canceled due to the variety of backend engines
 
 ## Tech
 Dillinger uses a number of open source projects to work properly:
@@ -21,12 +21,10 @@ Dillinger uses a number of open source projects to work properly:
 - [jqueryClickAndHold] - Smooth movement (modified)
 
 ## Installation
-Add to html 
+Add to html
 ```html
 <div class="entry-content clearfix" style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top: 10px">
-    <!-- NOTE: don't change data-path -->
-    <!-- NOTE: don't change data-Cheight -->
-    <canvas data-path="" data-Cwidth="800" data-Cheight="600"></canvas>
+    <canvas data-Cwidth="800" data-Cheight="600"></canvas>
 </div>
 <script src="/static/js/button.js?v=1" charset="utf-8"></script>
 <script src="/static/js/jquery.click-hold.js?v=1"></script>
@@ -40,7 +38,7 @@ and create a [static] folder on your server at the root
 
 ## License
 By using this project you agree to the [GNU] license
-    
+
 [static]: <https://github.com/bokonV2/VirtualTour/tree/main/static>
 [GNU]: <https://github.com/bokonV2/VirtualTour/blob/main/LICENSE>
 [Telegram]: <https://t.me/AyToshi>
