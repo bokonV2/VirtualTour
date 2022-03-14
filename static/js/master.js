@@ -104,6 +104,7 @@ function drawObjects(objects, offset, x, y, rtn) {
       return [true, r];
     } else {ctx.strokeStyle = "white"};
     ctx.stroke();
+    return [false, NaN]
   };
 };
 
