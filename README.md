@@ -8,11 +8,11 @@
 ## Features
 - [ ] Add a convenient constructor
 - [ ] Optimize the design solution for mobile devices
-- [ ] Fix the display when changing the canvas height
+- [x] Fix the display when changing the canvas height
 
 ## Note
 - Unstable work on mobile devices
-- Display problems when changing the canvas height
+- The path selection for the static folder is canceled due to the variety of backend engines
 
 
 ## Tech
@@ -21,7 +21,7 @@ Dillinger uses a number of open source projects to work properly:
 - [jqueryClickAndHold] - Smooth movement (modified)
 
 ## Installation
-Add to html 
+Add to html
 ```html
 <div class="entry-content clearfix" style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top: 10px">
     <!-- data-path = path to /static -->
@@ -40,7 +40,7 @@ and create a [static] folder on your server
 
 ## License
 By using this project you agree to the [GNU] license
-    
+
 [static]: <https://github.com/bokonV2/VirtualTour/tree/main/static>
 [GNU]: <https://github.com/bokonV2/VirtualTour/blob/main/LICENSE>
 [Telegram]: <https://t.me/AyToshi>
