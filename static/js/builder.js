@@ -87,7 +87,7 @@ function drawObjects(objects, offset, x, y, rtn) {
     ctx.lineTo(r.cords.x * scale + 50 - reOffset, r.cords.y * scale);
     ctx.closePath();
   }
-  var index = 0;
+  var indexRemove = 0;
   reOffset = (offset/(reCWidth/canvasWidth));
 
   for(var r of objects) {
@@ -102,7 +102,7 @@ function drawObjects(objects, offset, x, y, rtn) {
         if (ctx.isPointInPath(x, y)) {
           ctx.strokeStyle = "yellow";
           ctx.stroke();
-          return [true, r, index];
+          return [true, indexRemove, r];
         } else {
           ctx.strokeStyle = "white";
         }
@@ -114,7 +114,7 @@ function drawObjects(objects, offset, x, y, rtn) {
           if (ctx.isPointInPath(x, y)) {
             ctx.strokeStyle = "yellow";
             ctx.stroke();
-            return [true, r, index];
+            return [true, indexRemove, r];
           } else {
             ctx.strokeStyle = "white";
           }
@@ -128,7 +128,7 @@ function drawObjects(objects, offset, x, y, rtn) {
           if (ctx.isPointInPath(x, y)) {
             ctx.strokeStyle = "yellow";
             ctx.stroke();
-            return [true, r, index];
+            return [true, indexRemove, r];
           } else {
             ctx.strokeStyle = "white";
           }
@@ -142,7 +142,7 @@ function drawObjects(objects, offset, x, y, rtn) {
           if (ctx.isPointInPath(x, y)) {
             ctx.strokeStyle = "yellow";
             ctx.stroke();
-            return [true, r];
+            return [true, indexRemove, r];
           } else {ctx.strokeStyle = "white"}
           ctx.stroke();
           break;
@@ -154,12 +154,12 @@ function drawObjects(objects, offset, x, y, rtn) {
           if (ctx.isPointInPath(x, y)) {
             ctx.strokeStyle = "yellow";
             ctx.stroke();
-            return [true, r];
+            return [true, indexRemove, r];
           } else {ctx.strokeStyle = "white"}
           ctx.stroke();
           break;
     }
-    index = index + 1;
+    indexRemove = indexRemove + 1;
 
   };
 };
@@ -167,9 +167,18 @@ function drawObjects(objects, offset, x, y, rtn) {
 function init(datas) {
   console.log(datas);
   data = datas;
-  id = "id0";
+  id = "id76";
   offset = data[id].offset;
   pic.src = data[id].img;
+  console.log(data[id].img)
+};
+
+function dataUpdate(datas) {
+  data = datas;
+};
+
+function dataUpdate2() {
+  $.getJSON(`/static/json/data2022.json?${Date()}`, dataUpdate);
 };
 
 function move(side) {
@@ -199,6 +208,7 @@ function openImg(ids, src) {
       data[id]["img"] = src;
     }
     pic.src = data[id].img
+    ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
     drawObjects(data[id].buttons, offset, 0, 0)
 
 };
@@ -238,19 +248,22 @@ canvas.onmousedown = function (e) {
     case -2:
       var draw = drawObjects(data[id].buttons, offset, x, y);
       if (draw[0]){
-        id = draw[1].idTo;
-        pic.src = data[draw[1].idTo].img;
-        offset = data[draw[1].idTo].offset;
+        id = draw[2].idTo;
+        pic.src = data[draw[2].idTo].img;
+        offset = data[draw[2].idTo].offset;
       };
       break;
     case -1:
+      // $.getJSON('/static/json/data2022.json?v1', dataUpdate);
       var draw = drawObjects(data[id].buttons, offset, x, y);
-      // console.log(data[id].buttons);
-      // console.log(draw[2]);
-      data[id].buttons.splice(draw[2], 1);
-      // console.log(data[id].buttons);
+      console.log(data[id].buttons);
+      console.log(draw)
+      console.log(draw[1]);
+      data[id].buttons.splice(draw[1], 1);
+      console.log(data[id].buttons);
       ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
       drawObjects(data[id].buttons, offset, 0, 0);
+      // saveData();
       break;
     case 0:
       console.log(i)
@@ -265,6 +278,7 @@ canvas.onmousedown = function (e) {
           cords["br"] = [(x + reOffset) / scale, y / scale];
           break;
         case 3:
+          // $.getJSON(`/static/json/data2022.json?${Date()}`, dataUpdate);
           cords["tr"] = [(x + reOffset) / scale, y / scale];
           i = -1;
           ccr["type"] = 0;
@@ -272,41 +286,51 @@ canvas.onmousedown = function (e) {
           ccr["cords"] = Object.assign({},cords);
           data[id]["buttons"].push(ccr);
           console.log(data[id]["buttons"]);
+          // saveData();
           drawObjects(data[id].buttons, offset, x, y);
           break;
       };
       i = i + 1;
       break;
     case 1:
+      // $.getJSON(`/static/json/data2022.json?${Date()}`, dataUpdate);
       ccr["type"] = 1;
       ccr["idTo"] = "id"+prompt("idTo");
       ccr["cords"] = {x:x * scale + reOffset, y:y * scale};
       data[id]["buttons"].push(ccr);
+      // saveData();
       drawObjects(data[id].buttons, offset, x, y);
       break;
     case 2:
+      // $.getJSON(`/static/json/data2022.json?${Date()}`, dataUpdate);
       ccr["type"] = 2;
       ccr["idTo"] = "id"+prompt("idTo");
       ccr["cords"] = {x:x * scale + reOffset, y:y * scale};
       data[id]["buttons"].push(ccr);
+      // saveData();
       drawObjects(data[id].buttons, offset, x, y);
       break;
     case 3:
+      // $.getJSON(`/static/json/data2022.json?${Date()}`, dataUpdate);
       ccr["type"] = 3;
       ccr["idTo"] = "id"+prompt("idTo");
       ccr["cords"] = {x:x * scale + reOffset, y:y * scale};
       data[id]["buttons"].push(ccr);
+      // saveData();
       drawObjects(data[id].buttons, offset, x, y);
       break;
     case 4:
+      // $.getJSON(`/static/json/data2022.json?${Date()}`, dataUpdate);
       ccr["type"] = 4;
       ccr["idTo"] = "id"+prompt("idTo");
       ccr["cords"] = {x:x * scale + reOffset, y:y * scale};
       data[id]["buttons"].push(ccr);
+      // saveData();
       drawObjects(data[id].buttons, offset, x, y);
       break;
 
   }
+  // $.getJSON(`/static/json/data2022.json?${Date()}`, dataUpdate);
 };
 
 pic.onload = function () {
@@ -319,6 +343,4 @@ pic.onload = function () {
   ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
   drawObjects(data[id].buttons, offset, 0, 0);
 };
-
-
-$.getJSON('/static/json/data.json', init);
+$.getJSON(`/static/json/data2022.json?${Date()}`, init);

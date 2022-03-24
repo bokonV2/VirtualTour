@@ -17,18 +17,18 @@ def builder():
     if request.method == 'POST':
         data = json.loads(request.form.get('data'))
         print(type(data))
-        with open('static/json/data.json', 'w', encoding='utf-8') as f:
+        with open('static/json/data2022.json', 'w', encoding='utf-8') as f:
             json.dump(data, f)
 
 
-    files = os.listdir("./static/image")
-    print(files)
+    # files = os.listdir("./static/image")
+    # print(files)
 
-    path =".\static\image"
+    path =".\static\image\BGAEK2022"
     filelist = []
     for root, dirs, files in os.walk(path):
         for file in files:
-            if(file.endswith(".jpg")):
+            if(file.endswith(".jpg") or file.endswith(".JPG")):
                 filelist.append((os.path.join(root,file)).replace(".\static\image\\", "").replace("\\", "/"))
     return render_template('builder.html', files=enumerate(filelist))
 

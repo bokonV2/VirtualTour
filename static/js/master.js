@@ -26,7 +26,7 @@ var load = true, door = true, offset = 0, iconSize = "80px";
 var scale = canvasHeight/600;
 const oldId = new Array();
 let data;
-var id;
+var id = "id76", defaultId = "id76";
 
 
 if(navigator.userAgent.match(/Android|iPhone/i)){
@@ -47,28 +47,42 @@ if(navigator.userAgent.match(/Android|iPhone/i)){
 mql.addListener(function(m) {location.reload()});
 
 
+
+
 let label = document.createElement('div');
 let div = document.createElement('div');
+let switchYear = document.createElement('div');
 div.innerHTML = `
+  <img onclick="fastOffset(0)" style="background: transparent;border: 0;" draggable="false" src="/static/image/btn/double-left.png" oncontextmenu="return false;" alt="left" width=${iconSize}>
   <img id="butL" style="background: transparent;border: 0;" draggable="false" src="/static/image/btn/left.png" oncontextmenu="return false;" alt="left" width=${iconSize}>
   <button onclick="back()" style="background: transparent;border: 0;"><img src="/static/image/btn/return.png" oncontextmenu="return false;" alt="" width=${iconSize}></button>
   <button onclick="init(data)" style="background: transparent;border: 0;"><img src="/static/image/btn/home.png" oncontextmenu="return false;" alt="" width=${iconSize}></button>
   <img id="butR" style="background: transparent;border: 0;" draggable="false" src="/static/image/btn/right.png" oncontextmenu="return false;" alt="right" width=${iconSize}>
+  <img onclick="fastOffset(1)" style="background: transparent;border: 0;" draggable="false" src="/static/image/btn/double-right.png" oncontextmenu="return false;" alt="right" width=${iconSize}>
 `;
 div.style = "margin-top:5px;";
-label.innerHTML = "<label>Developed by Bohan Zahar&nbsp</label><a href='https://t.me/AyToshi'>Telegram&nbsp</a><a href='https://www.instagram.com/zakhar.bokhan/'>Instagram</a>"
+label.innerHTML = "<label>Developed by Bohan Zahar&nbsp</label><a href='https://t.me/AyToshi'>Telegram&nbsp</a><a href='https://www.instagram.com/zakhar.bokhan/'>Instagram</a>";
 label.style = `display:flex; flex-direction:row; align-items:center; justify-content: flex-end; width:${canvasWidth}px;`;
+switchYear.innerHTML = `
+  <link rel="stylesheet" href="/static/css/master.css">
+  <label class="toggle happy-sad">
+      <input type="checkbox" class="toggle-checkbox">
+      <div class="toggle-btn"></div>
+  </label>
+`;
+switchYear.style = `display:flex; flex-direction:row; align-items:center; justify-content: center; width:${canvasWidth}px;`;
+$('.entry-content').prepend(switchYear);
 $('.entry-content').prepend(label);
 $('.entry-content').append(div);
 
 
 $('#butR').clickAndHold({
   timeout: 5,
-  onHold: function (e, n) {move(20)}
+  onHold: function (e, n) {move(15)}
 });
 $('#butL').clickAndHold({
   timeout: 5,
-  onHold: function (e, n) {move(-20)}
+  onHold: function (e, n) {move(-15)}
 });
 
 
@@ -99,6 +113,13 @@ function ctxDraw(r) {
 
 function drawObjects(objects, offset, x, y, rtn) {
   reOffset = (offset/(reCWidth/canvasWidth));
+  ctx.beginPath();
+  ctx.fillStyle = 'rgb(0, 0, 0)';
+  ctx.fillRect(0, 0, canvasWidth, 5);
+  ctx.beginPath();
+  ctx.fillStyle = 'rgb(200, 0, 0)';
+  var cursorOffset = (reOffset * reCWidth / (width - reCWidth) - 5);
+  ctx.fillRect((cursorOffset > 0) ? cursorOffset: 0 , 0, 5, 5)
   for(var r of objects) {
     switch (r.type) {
       case 0:
@@ -124,8 +145,9 @@ function drawObjects(objects, offset, x, y, rtn) {
 };
 
 function init(datas) {
+
   data = datas;
-  id = "id0";
+  id = defaultId;
   oldId.push(id);
   // offset = data[id].offset; // IDEA: fixed offset on photo
   pic.src = data[id].img;
@@ -149,6 +171,12 @@ function move(side) {
     ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
     drawObjects(data[id].buttons, offset, 0, 0);
   };
+};
+
+function fastOffset(x) {
+  offset = (x == 0) ? 0: (width - reCWidth);
+  ctx.drawImage(pic, offset, 0, width, height, 0, 0, reWidth, canvasHeight);
+  drawObjects(data[id].buttons, offset, 0, 0);
 };
 
 
@@ -189,4 +217,16 @@ pic.onload = function () {
 };
 
 
-$.getJSON(`/static/json/data.json`, init);
+$( document ).ready(function() {
+  $('.toggle-checkbox').click(function(){
+    if ($(this).is(':checked')){
+      defaultId = "id0"
+      id = "id0"
+      $.getJSON(`/static/json/data2015.json`, init);
+    } else {
+      defaultId = "id76"
+      $.getJSON(`/static/json/data2022.json`, init);
+    }
+  });
+});
+$.getJSON(`/static/json/data2022.json`, init);
